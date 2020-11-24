@@ -1,0 +1,810 @@
+Three type of SQL query Methods
+------------------------------------------------
+1. executeQuery()
+2. executeUpdate()
+3. execute()
+
+1. executeQuery()
+---------------------------
+this SQL query is for select SQL query (select) 
+>>> public ResultSet executeQuery(String query); throws SQL Exception
+
+ex..ResultSet rs = stmt.executeQuery();
+
+2. executeUpdate()
+---------------------------
+this SQL query is for non-select SQL query (insert,update,drop,create)
+>>> public int executeUpdate(String query) throws SQL Exception
+
+
+
+3. execute()
+------------------
+this SQL query is for both select and non-select SQL query . when we don't know the query in advance the we use this.. (mostly used is dynamic way)
+>>> public boolean execute(String query); throws SQL Exception
+
+1. execute() method return true value when we execute select SQL query...
+2. execute() method return false value when we execute non-select SQL query...
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Metadata
+----------------
+Data about data is called MetaData...
+
+1. DatabaseMetadata 
+2. ResultsetMetadata
+
+1. DatabaseMetadata
+-------------------------------
+to represent DatabaseMetaData java has given seperate  interface...
+
+>>> use of this DatabaseMeta is that whenever you work with unknown DB then by using MetaData you will  aget DB information
+>>> java.sql.DatabaseMetaData
+
+public DatabaseMetaData getMetaData() throws SQL Exception
+>>>this method is available in Connection(I)
+
+DatabaseMetaData  md = con.getMetaData ();
+>>> when you getting this MetaData we will get details of Database
+
+public String getDatabaseProductName()
+public String getDatabaseProductVerson()
+public int getDriverMinorVersion()
+public int getDriverMajorVersion()
+public String getSQLKeyword()
+
+1. >>> DB supported String funtion
+       public String getStringFunctions()
+
+2. >>> get all supported numeric function supported by DB 
+        public String getNumericFunctions()
+  
+3. >>> to check stored features are supported by DB or not
+        public boolean supportedStoredProcedures()
+
+4. >>> to check whether batch updations are supported by DB or not
+        public boolean supportsBatchUpdates()
+-------
+-------
+-------
+-------
+
+2. ResultSetMetadata
+----------------------------------
+Data about the data existed in ResultSet object ...
+it includes >> no of coloums
+                    >> colom name
+                    >> colom data types
+                    >> colom size...
+
+>>> to get ResultSetMetaData Object java hai provide seperate interface
+
+java.sql.ResultSetMetaData
+
+public ResultSetMetaData getMetaData() throws SQL Exception
+
+ResultSetMetaData rmd = rs.getMetaData()
+>>> when you getting this MetaData we will get details of ResultSet
+
+1. public int getColoumnCount()
+2. public String getColoumnName(int index)
+3. public String getColoumnTypeName(int index)
+4. public int getColoumnDisplaySize()
+--------
+--------s
+---------
+
+Assignment:1---->
+Write a JDBC program to display a particular table data along with it coloumn name ?
+Note: take table name as dynamic input
+
+Assignment:2 ---->
+Write a jdbc application to execute s SQL query and to display the result of that SQL query by taking the SQL query as a dynamic input?
+
+Assignment:3 ---->
+Write a jdbcApplication to read data from a particular database table and display that data through an HTML file?
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Types Of ResultSet :-
+------------------------------
+1. On the basis of ResultSet Concurrency , there are two types  of ResultSet are available;
+      (a)---> Read Only ResultSet
+               -----------------------------------
+                 It allow only to read data not allow to do update....
+                Constraint Provided by ResultSet >>>>  public static final int CONCUR_READ_ONLY; (1007)
+  
+      (b)---> Updatabale ResultSet
+                ---------------------------------   
+                 It allows to Perform updation over the ResultSet Object Content...
+               Constraint Provided by Updatabale ResultSet >>>  public static final int CONCUR_UPDATABLE ;     
+
+
+2. On the basis of ResultSet Cursor movement;
+     (a)---> Forward Only ResultSet
+               ------------------------------------
+                It allows to read data only in forward direction not on backward direction
+               Constratint Provided by ResultSet Interface >>> public static final int TYPE_FORWARD_ONLY;
+                   
+    (b)---> Scrollable ResultSets
+            -------------------------------------
+                It allows to read data in both forward direction and in backward direction.
+                      |-->  Scoll Sensitive ResultSet (Database me change karne par ResultSet par koi effect nai hoga)
+                                   It allows to later database table modification  
+                            predefined constraintt provide by ResultSet(I) --- public static final int TYPE_SCROLL_SENSITIVE;
+
+                      |--> Scroll InSensitive ResultSet (Database me change karne par ResultSet par effect hoga)
+                                    It does not allow the later database table modification
+                           predefined constraintt provide by ResultSet(I) --- public static final int TYPE_SCROLL_INSENSITIVE;
+                            
+
+>>> Scroll Sensitive ResultSet Object
+-----------------------------------------------------------
+it able to allow later database table modification
+
+1. Create Scroll Sensitive ResultSet Object
+    Statement st = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE , ResultSet.CONCUR_UPDATABLE);
+    ResultSet  rs = st.executeQuery("select * from emp1"); 
+
+2. display datat from Scroll Sensitive ResultSet Object
+     while(rs.next){
+     sop(rs.getxXX(col_index));
+}
+
+3. pause application execution goto database , perform modifications over the data and perform commit operation . 
+     System.in.read(); // it will pause program exection untill we click on enter button
+     sql>update emp1 set = esal+500 where esal<5000;
+     sql>commit;
+
+4. Redisplay the data from Scrollable ResultSet Object 
+    rs.beforeFirst(); ----> to bring cursor to before first record
+    
+    while(rs.next)  {
+    rs.refreshRow(); // current record will be refreshed 
+    sop(rs.getxXX(col_index));
+}
+
+if the data is not same before and after updation then the ResultSet object is scroll sensitive ResultSet Object	
+
+-------------------------------------------------------------------
+Methods supporting Scrollable ResultSets
+-------------------------------------------
+1. public void beforeFirst() 
+     >>> cursor will move to the before first record position
+
+2. public void afterFirst()
+     >>> cursor will move to the position after last record positoin
+
+3. public boolean first() 
+    >>> moving cursor to first record position
+
+4. public boolean last()  
+    >>>  moving cursor to last recrod position
+
+5.  public boolean absolute(int record_position)
+     >>> directly cursor moved to particular direrction
+
+6. public boolean relative (int no_of_Records) 
+    >>> skipping cursor from present position to specifies position(jumping cursor from one positin to another position)
+
+7. public void refreshRow() 
+    >>>  to get refresh data from the database
+8. public void setFetchSize(int no_of_Records)
+
+Methods supporting Non-Scrollabe ResultSets(Forward only) 
+--------------------------------------
+>>> rs.next() ---> check whether the next record is available or not
+>>> rs.getXxx()---> Read coloum values from record wither with coloum index or coloum name
+>>> rs.getRow()----> it return current position of Cursor in the ResultSet i.e row number	
+-----------------------------------------------------------
+>>> Updatable ResultSet
+----------------------
+1. These ResultSet object are allowing modification on their content inorder to perform the database operation like insert,update,delete without using the         corresponding SQL Queries...
+2. whenever we want to work with unknown database then we will use it ...
+
+>>> Updatable ResultSet Object for Insert operaintion Database
+        ----------------------------------------------------------------
+       STEPS: 1. Get Updatable ResultSet Object :
+                        Statement st  =con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE , ResultSet.CONCUR_UPDATABLE);
+                        ResultSet rs = st.executeQuery("select * from emp1");
+                      
+                    2. Move Cursor to end of ResultSet and take a scanner to include new Record.
+                         rs.moveToInsertRow();
+                                        or
+                         rs.afterLast();
+                                        or
+                         rs.next();
+   
+              
+                    3. Insert new record data in updatable ResultSet Object 
+                         rs.UpdateInt(1,555);
+                         rs.UpdateString(2,"EEE");
+                         rs.UpdateFloat(3,7000);
+                         rs.updateString(4,"Pune");
+
+                    4. send new Record Data from Updatable ResultSet to Database
+                         public void insertRow();
+                         rs.insertRow(); 
+    
+Updatable ResultSet Object for Updating database
+-------------------------------------------------------------------------
+STEP:1    Get Updatable ResultSet Object
+                Statement st = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE , ResultSet.CONCUR.UPDATABLE);
+                Result rs  = stmt.executeQuery("select *from emp1");
+    
+          2.   Update data in Updatable ResultSet object and send that changes  to Database table:
+                while(rs.next()){
+                 float esal = rs.getFloat(3);
+                 if(esal<10000){
+                      esal=esal+500; 
+                      rs.updateFloat(3,esal);
+                      rs.updateRow();
+                   }
+               }
+
+Updatable ResultSet Object for Delete Operation
+--------------------------------------------------------------------
+STEP1:    Get Updatable ResultSet Object
+                Statement st = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE , ResultSet.CONCUR.UPDATABLE);
+                Result rs  = stmt.executeQuery("select *from emp1");
+     
+        2:   move to the records position and delete the record
+              while(rs.next()){
+              float esal = rs.getFloat(3);
+              if(esal<10000){
+              rs.deleteRow();
+             }
+}
+ 
+Utilization of Properties file for JDBC application
+----------------------------------------------------------------------
+1. To manage JDBC parameters in jDBC Application
+2. To manage frequently changed data in Java Application
+3. to manage label of GUI Components in GUI Application
+4. to manage exception message in Exceptoin Handling
+5. To manage Locale respective messages in Internationlization
+6. to manage validation messages in data validations
+-------
+-------
+------
+db.properties
+---------------------
+driver_Class = oracle.jdbc.OracleDriver
+driver_URL = jdbc:oracle:thin:@localhost:1521:orcl
+db_User_Name = shubhamdb
+db_password = shubham
+
+In JDBC Appl:
+--------------------
+Properties p = new Properties();
+FileInputStream fis = new FileInputStream("db.properties");
+p.load(fis);
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Batch Updations:-
+--------------------------------
+Room A  ----> 100 Sticks available in Room A and  i want to carry these from Room A to B
+                         Approach 1 --> take one y one stick and put up on Room B             
+                         Approach 2 --> tie all the stick with thread and pick that single unit and put on Room B 
+                                                     >>> hence by using approach 2 performance will increase....
+Room B
+
+---------------------------------------------------------------------------------------------------
+Prepared Statement
+----------------------------------
+Q. what is the difference b/w preparedStatement and Statement 
+Ans:
+-------
+>>> Statement will be used when we want to execute all the queries individually
+        >> statement is not supporting Date
+        >> statement is not supporting BLOB and CLOB
+>>> PreparedStatement will be used when we have a requirement to execute same SQL query in the next sequence with very good     performance...
+
+---------------------------------------------------------------------------------------------------
+BLOB and CLOB
+---------------------
+>>> with PreparedStatement Date , BLOB and CLOB are very good processing is very good...
+  
+BLOB[Binary Large Object] :
+--------------------------------------
+ It is a data type in databases (Oracle datatype) it able to manage large volumes of binary data like images data...
+
+1. Create table with BLOB type coloum in database
+     create table emp1(ENO number(3) primary key , EMP_PIC BLOB );
+
+2. Create PreparedStatement Object  : 
+    PreparedStatement pst = con.PrepareStatement("insert into emp1 values(?,?)");
+
+3. set values to the normal positional parameter : 
+     pst.setInt(1,111);
+     
+4. set values to the BLOB type parameter :
+     a) identify image file JPEG or PNG and represent that image file in the form of file class Object
+         File file = new File("my_imgage.jpg");
+     
+    b) Create FileInputStream object from file Object
+         FileInputStream fis = new FileInputStream(file);
+  
+    c) set binary data to blob type parameter and by creating a binary stream 
+         pst.setBinaryStream(2,fis,file.length());
+
+5. send execution signal to database enginee inorder to insert a data 
+    pst.executeUpdate();
+
+CLOB[Character Large Object] : 
+--------------------------------------------------
+>>> It is a data type in databases (Oracle datatype) it able to manage large volumes of character  data like images data like documents
+
+BLOB                           ---------------------------->   CLOB
+setBinaryStream()   ---------------------------->   setCharacterStream()
+getBinaryStream()   ---------------------------->   getCharatcerStream()
+InputStream()           ---------------------------->   Reader
+OutputStream()        ---------------------------->   Writer
+FileInputStream()     ---------------------------->   FileReader
+FileOutputStream()  ---------------------------->   FileWriter
+
+>>> Steps to insert CLOB data into database 
+-------------------------------------------------------------
+1. Create table with CLOB type coloum in database
+     create table webapps(APP_NAME varchar2(15) primary key , DEPL_DESC CLOB);
+
+2. Create PreparedStatement Object  : 
+    PreparedStatement pst = con.PrepareStatement("insert into webapps values   (?,?)");
+
+3. set values to the normal positional parameter : 
+     pst.setString(1,"app1");
+     
+4. set values to the CLOB type parameter :
+     a) identify Document file JPEG or PNG and represent that image file in the form          of file class Object
+         File file = new File("web.xml");
+     
+    b) Create FileReader object from file Object
+         FileReader fr = new FileReader(file);
+  
+    c) set character data to CLOB type parameter and by creating a character stream 
+         pst.setCharacterStream(2,fr,file.length());
+
+5. send execution signal to database enginee inorder to insert a data 
+     pst.executeUpdate();
+
+
+>>> Steps to Read CLOB data into database 
+-------------------------------------------------------------
+1. Get ResultSet object :
+    PreparesStatement pst = con.prepareStatement("select * from webapps     where appname = 'webapp2' ");
+    rs = pst.executeQuery();
+
+2. Read normal data from ResultSet object :
+     rs.next();
+     String appName = rs.getString(2);
+     sopln(appName);
+
+3. Prepare target file to hold character data
+    Filewriter fw = new FileWriter("E:/images/dep_Desc.xml");
+
+4. Get character stream from CLOB type coloum in resultset object 
+     public Reader getCharacterStream(int col_Index)
+    
+    ex.. Reader r = rs.getCharacterStream(2);
+ 
+5. Read char by char from reader and write char by char to FileWriter untill EOF     character
+
+   int val = r.read();
+   while(val != -1)
+  {
+     fw.write(val);
+     val = r.read();
+  } 
+     
+----------------------------------------------------------------------------------------------------
+
+Connection pooling mechanism
+---------------------------------------------
+To avoid creation of the connection and destruction of connection object...
+in JDBC appl whenever we want to perform some database opeartion we've to create connection object and the we have to destroy connection objects
+so our performance is decreased because creating and destroying connection objects these two steps are costull operation means it is time taking operation so performance is reduced to improve performance we have to go to connection pooling mechanism
+
+>>> in Connection pooling mechanism we will make pool Object
+>>> inside pool Object we are able to keep some fix no of Connection  Object
+>>> so at the time of loading application pool object is created inside pool object connection object will stored
+>>> so if we want to destroy connection object we will send that connection object to pool object again
+>>> again when some require connection object then take it from pool object and when we have to destry connection object then give back connection object to          pool object....
+>>> so in this process we're  getting connection object from pool and sending back again connection object to the pool without destroying connection object...
+
+In how many ways we're perform Connection pooling mechanism : -  
+----------------------------------------------------------
+1. Default Connection pooling mechanism
+2. Third party product provided Connection pooling mechanism
+3. Application server provided Connection pooling Mechanism through JNDI
+
+
+1. Default Connection pooling mechanism provieded by Database software :-
+****************************************************************
+Approach - 1
+***********
+STEPS:-
+1. Create Datasource object :-
+--------------------------------------------
+
+DataSource : it able to store all JDBC parameter like Driver Class name , Driver URL
+DB_Name , DB_Password .... and it able to provide Connection Objects through 
+ Pool Objects
+
+To represent Datasource object , JAVA has given an interface in the form of "javax.sql.DataSource" , provided by SUN and implementation is provided by Database vendors
+EX: OracleDataSource
+       MySQL DataSource
+    --------
+----------
+
+EX: OracleDataSource ods = new OracleDataSource();
+
+2. Set JDBC Parameters to DataSource Object : -
+------------------------------------------------------------------
+public void setURL(String driver_URL);
+public void setUser(String DB_Uname);
+public void setPassword(String db_Password);
+
+EX:  ods.setURL("jdbc:oracle:thin:@localhost:1521:xe");   
+        ods.setUser("javahome");
+        ods.setPassword("javahome");
+
+3. Get Connection object from data source
+-----------------------------------------------------------
+   public Connection getConnection()
+EX: Connection con = ods.getConnection();
+
+
+***********
+Approach - 2
+***********
+Utilization of OracleConnectionPoolDataSource[oracle.jdbc.Pool]
+------------------------------------------------------------------
+
+1. Create OracleConnectionPoolDataSource 
+               OracleConnectionPoolDataSource ds = new OracleConnectionPoolDataSouce();
+
+2. Set JDBC Parameters to OracleConnectionPoolDataSource:-
+
+       ds.setURL("jdbc:oracle:thin:@localhost:1521:xe");
+       ds.setURL("javahome");
+       ds.setPassword("javahome");
+
+3. Get PooledConnection object from DataSource :
+    PooledConnection pc = ds.getPooledConnection();
+
+4. Get Connection object from PooledConnection :
+    Connection con = pc.getConnection();
+
+
+2. Third party product provided Connection pooling mechanism
+*********************************************************************
+1. DBCP Connection pooling Mechanism
+2. Proxol Connection Mechanism
+3. C3P0 Connection Pooling Mechanism
+
+1. DBCP Connection Pooling Mehchanism[Provided by Apache Software foundation]
+-------------------------------------------------------------------------
+DataSource : org.apache.commons.dbcp2.BasicDataSource
+Properties  :  setInitialSize(---);
+                         setMaxTotal(---);
+                         setDriverClassName(---);
+                         setUserName(---);
+                         setPassword(---);
+
+Jars : 1. commons-pool-2.3.jar
+          2. commons-dbcp-2.1.jar
+          3. commons-logging-1.2.jar
+          4. ojdbc6.jar 
+
+2. Proxol Connection Mechanism
+-----------------------------------------------
+video 38
+
+3. C3P0 Connection Pooling Mechanism
+-----------------------------------------------
+
+
+----------------------------------------------------------------------------------------------------
+Callable statement
+----------------------------
+To Access stored procedures and functions which are available at database from java application...
+
+Q. What is the difference b/w statement , preparedStatement and CallableStatement?
+Ans :-    
+1.  if we want to execute different-different SQL query then we should have to go for "Statement"
+2.  if we want to execute same SQL Query in the next sequence inorder to improve performance of our JDBC application then         should have to go for"PreparedStatement"
+3.  when we want to execute stored procedures and functions from java application which are defined at databases then we         should go for "callable statement" 
+
+Q. What is the difference b/w stored procedures and stored functions??
+Ans:- 
+-------
+Stored Procedures is a set of instruction representing an action and defined in a databases and it will not return any value by using "return" statement... 
+Syntax of writting procedures [need to add this at database side]:-
+-------------------------------------------------------------------------------------
+create or replace procedure proc_Name[(param_List)]
+AS
+-----Global Declaration---------
+BEGIN
+-----Database Logic------
+END proc_Name;	
+/  -----> to save and compile
+
+Stored Functions is s set of instruction representing an action and defined in a databases and it will use return statement to return values
+Syntax of writting procedures
+-------------------------------------------
+create or replace PROCEDURE function func_Name[(param_list)] return Data_Type 
+AS
+----GLobal Declarations 
+BEGIN
+----Database logic----
+return value;
+END func_Name 
+/ ----->  to save and compile functions  	  	 
+
+
+In stored procedures and functions three types of paramters are available 
+-----------------------------------------------------------------------------------------------------
+1. In type parameter [carry data from procedure call to procedure body]
+    >>> Var_Name IN Data_Type
+ 
+2. OUT type parameter [carry data from procedure body to procedure call]  
+    >>> Var_Name OUT Data-Type
+
+3. INOUT type parameter [it carry data from procedure body to procedure call and procedure call to procedure body]
+    >>> Var_Name INOUT Data_Type
+
+Q. What is the purpose of cursor type variables in procedures and function?
+Ans--->To hold multiple records data then we should go for cursor types variables...
+
+SYS_REFCURSOR [cursor type variable]
+-----------------------
+
+In Procedure / Function:-
+----------------------------------
+1. Decalre SYS_REFCURSOR type variables as OUT type variables only..
+2. Open SYS_REFCURSOR variables before select SQL Query...
+
+create or replace procedure getEmps(sal IN float , emps OUT SYS_REFCURSOR) 
+AS  
+BEGIN
+open emps for
+select * from emp1 where ESAL < sal; 
+END getEmps;
+/
+
+In jdbc Application 
+------------------------
+CallableStatement cst = con.prepareCall("{call getEmps(?,?) }");
+cst.setFloat(1,10000);
+cst.registerOutParameter(2,OracleTypes.CURSOR);
+cst.execute();	
+ResultSet rs = (ResultSet)cst.getObject(2); // typecasting
+
+while(rs.next())
+{
+  -------
+}
+
+
+----------------------------------------------------------------------------------------------------
+Transaction management
+-----------------------------------
+>>> Transaction is a unit of work performed by front end application on Backend system
+
+EX:- 1. Deposit some amount in Accout 
+        2. Withdrawl some amount from an Account
+
+>>>  If u want to manage transaction in database related application we must follow 4 properties :- 
+
+A-----> Atomicity
+C-----> Consistency
+I------> Isolation
+D-----> Durablity
+
+Atomicity
+------------------------------------------
+Perform either all the operations or none of the operations in an transactions...
+[Transaction is in SUCCESS state or FAILURE state]
+
+Consistency
+------------------------------------------
+Before transaction  and After transaction database state must be in stable. 
+
+
+Isolation
+------------------------------------------
+If we execute more than one transaction on single data item then that transaction are called as "Concurrent Transaction" . In concurrent Transaction one transaction execution should not give effect to another transaction...
+
+
+Durablity
+--------------
+It is a situation after doing the transaction if we have any system failure [power failure , OS crashing] then the modification which you have done during the transaction must be preserved...
+
+If we want to perform Transaction Management in JDBC Application then all ACID property must be satisfied
+>>> JDBC is provided limited support for Transaction 
+>>> To get more support in transaction then we must use  JTA [Java Trasaction API]
+
+>>> JDBC is provided limited support for transaction but if you want to get more support in Transaction then we must use JTA[Java Transaction API] provided by J2EE technologist... 
+
+>>> In JDBC we're able to get predefined support upto Atomicity and Isolation 
+
+>>> In JDBC application when we establish connection automatically connection will be in Auto-commit mode.[when we submit SQL Query to DB Enginee]
+
+****** public void setAutoCommit(boolean b) ******
+
+if b is true then connection will be available in Auto-commit only . if it false then connection is not available in Auto-commit
+
+con.setAutoCommit(false)
+
+
+To interact with two Databases:-
+-------------------------------------------
+1. Two times we must load Driver
+2. Two Connections 
+3. Two Statements / PreparedStatements
+4. Two ResultSet
+
+Savepoint:
+----------------
+>>> if we want to block set of instruction then we use Savepoint...
+
+----------------------------------------------------------------------------------------------------
+Isolation Levels:
+----------------------
+If we perform more than one operation on a signle data item then there may be a chance of data inconsistency or concurrency problem...
+due to which following isolation problems occur:-
+--------------------------------------------------------------------
+1. Lost Update Problem..
+2. Dirty Read Problem
+3. Non Repeatable Read Problem
+4. Panthom Read Problem
+
+java.sql.Connection
+-------------------------------
+public static final int TRANSACITON_NONE = 0;
+---> it will not resolve any of the cincurrenct problem , it will represent all concurency problem
+
+public static final int TRANSACTION_READ_UNCOMMITED = 1;
+----> it will resolve lost update problem and it will represent all remaining problesm. 
+
+public static final int TRANSACTION_READ_COMMITED = 2;
+-----> it will resolve lost update problem and dirty read problem and it will represent a;; remaining problem
+
+public static int TRANSACTION_REPEATABLE_READ = 4;
+-----> it will resolve lost update problem , Dirty Read problem and Non repeatable
+read and it will represent all remaining problems..
+
+public static final int  TRANSACTION_SERIALIZABLE = 8;
+-----> it will resolve all concurency problems..
+
+public void setTransactionIsolation(int val)
+EX: con.setTransactionIsolation(Connection.TRANSACTION_READ_COMITED);
+       con.setTransactionIsolation(2);
+
+
+
+
+RowSets
+-------------
+Rowset is an object , it is able to store fetched data from database in more powerfull manner when compared with ResultSet
+
+Q. What are the difference b/w ResultSet and RowSet?
+---------------------------------------------------------------------------
+Ans:- 
+1.   In JDBC , by default  , ResultSet is not implementing java.io.Serializable interface, so that it is not eligible to           transfer in network.
+     In JDBC , by default , RowSets are implementing java.io.Serializable interface , so that, these are eligible to transfer      in the network.
+
+2.   In JDBC , by default , all ResultSet objects are Read only and Forward only , they are not Scrollable and Updatable .
+     In JDBC , by deafult all Rowsets are Scrollable and Updatable...
+
+3.  In JDBC by default ResultSet objects are connected ResultSet objects  , that is in JDBC , ResultSet objects must required     connection to the database always..
+    In JDBC Disconnected RowSets are existed , which are not required to have the connection always with database..
+
+4. In JDBC , ResultSet are not having Event-Notification model.
+     In JDBC , RowSets are having Event-Notification model to generate events at each and operation in RowSet.
+
+5. In JDBC ResultSets are not cached objects , every time we must interact with database to get results even the same results are generated. 
+    In JDBC Cached RowSets are existed Which are resuable with out interacting with database everytime.. 
+
+6. ResultSet is existed in java.sql package 
+    RowSet is existed in javax.sql package
+
+7. In ResultSet we can not combine two result set object in single one it means join ResultSet object are not available 
+    In RowSets we can combine two rowsets object in single one it means join RowSets object are available    
+
+8. Not possible to maintain filter in ResultSet object without using "where" clause inorder to filter the Data 
+     but in RowSet we can maintain filter in RowSets inorder to filter the Data
+
+In JDBC , RowSets are divided in two ways.
+
+1. Connected RowSets 
+-------------------------------
+These RowSets are same as ResultSet , which are required connection with database always to perform database operations in JDBC Application.
+Ex. Jdbc RowSet
+
+2. Disconnected RowSets.
+----------------------------------
+These RowSet are not required to manage connection always in JDBC application , they will manage Connection while performing operations with database only , in the remaining time Connection may not be existed
+EX..     Cached RowSet
+           |-WebRowSet
+              |-FilteredRowSet
+              |- JoinRowSet
+
+SUN Microsystem has provided all the rowsets in the form of 
+interfaces and whose implementations classes are provided by all database vendor. 
+
+JDBC has provided all the RowSets in the form of the following two packages
+1) javax.sql;
+2) javax.sql.rowset
+
+For all the RowSet , there is a common and default super type is existed that is 
+"javax. sql.RowSet" , it is a child interface to "java.sql.ResultSet"
+ 
+java.sql.ResultSet (Parent)
+           ^   
+           |
+           |
+javax.sql.RowSet   (Child)
+             
+javax.sql.RowSet (I)
+javax.sql.rowset.JdbcRowSet (I)
+javax.sql.rowset.CachedRowSet (I)
+javax.sql.rowset.WebRowSet (I)
+javax.sql.rowset.JoinRowSet (I)
+javax.sql.rowset.FilteredRowSet (I)
+
+
+SUN Microsystem has provided his own impmentation part for all the RowSet interfaces as refrence implementation in the form of the following classes.
+
+com.sun.rowset.JdbcRowSetImpl
+com.sun.rowset.CachedRowSetImpl	
+com.sun.rowset.WebRowSetImpl
+com.sun.rowset.JoinRowSetImpl
+com.sun.rowset.FilteredRowSetImpl
+
+Oracle has provided implementation for all the above RowSets in the form of "oracle.jdbc.rowset" package in the "ojdbc8.jar".
+
+oracle.jdbc.rowset.OracleJdbcRowSet
+oracle.jdbc.rowset.OracleCachedRowSet
+oracle.jdbc.rowset.OracleWebRowSet
+oracle.jdbc.rowset.OracleJoinRowSet
+oracle.jdbc.rowset.OracleFilteredRowSet
+
+
+
+How to create RowSets objects:-
+----------------------------------------------
+RowSetFactory rsf = RowSetProvider.newFactory();
+
+ JdbcRowSet jrs = rsf.createJdbcRowSet();
+ CachedRowSet crs = rsf.createCachedRowSet();
+WebRowSet wrs = rsf.createWebRowSet();
+JoinRowSet jnrs = rsf.createJoinRowSet();
+FilteredRowSet() frs  = rsf.createFilteredRowSet();
+
+
+JdbcRowSet(I):-
+---------------------
+>> it is exactly same as ResultSet except that it is Scrollable and UpdatableResultSet
+>> JdbcRowSet is connected rowset and hence JdbcRowSet compulsory required Connection  
+>> JdbcRowSet is non-serializable and hence we cannot send over through network
+
+MySql Details:-
+---------------------------------------------------------------------------------------------------------------------
+
+Driver Class = com.mysql.cj.jdbc.Driver
+Driver URL = jdbc:mysql://localhost:3306/dbname
+Db User Name : shubham 
+DB password : shubham
+
+Class.forName("com.mysql.cj.jdbc.Driver");
+con = DriverManager.getConnection("jdbc:mysql://localhost:3306/shubham","shubham","shubham");
+
+
+
+
+
+
+
+Servlets
+JSPs
+   |-JSTl
+   |-EL
