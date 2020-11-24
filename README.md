@@ -1,7 +1,7 @@
 # Advance-Java
 Added all resources and image which i made while learning advance java
 
-# JDBC(Java Database Connectivity)
+# >>>> JDBC(Java Database Connectivity)
 # ---------------------------------------------------------------------
 
 # 1. Advance java intro
@@ -94,9 +94,9 @@ Added all resources and image which i made while learning advance java
 ![30  rowset](https://user-images.githubusercontent.com/48306820/100052289-9dcbd580-2e43-11eb-9a3e-379e110bdd92.png)
 
  
-# Servlet
+# >>>> Servlet
 # ---------------------------------------------------------------------
 
 
-# JSP(Java Server Pages)
+# >>>> JSP(Java Server Pages)
 # ---------------------------------------------------------------------
